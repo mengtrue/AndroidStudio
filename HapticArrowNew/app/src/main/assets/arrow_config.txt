@@ -1,0 +1,6 @@
+{"arrow_prepare":[33, 30, 29, 32, 28, 31, 27, 14], 
+"arrow_out_heavy": [1],
+"arrow_out_light": [2],
+"arrow_fly_heavy":[47],
+"arrow_fly_light":[49], 
+"arrow_end":[30]} 
