@@ -173,7 +173,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         mPaint.setColor(Color.WHITE);
         //设置焦点
         setFocusable(true);
-        initHaptic(context);
+        //initHaptic(context);
 
     }
 
