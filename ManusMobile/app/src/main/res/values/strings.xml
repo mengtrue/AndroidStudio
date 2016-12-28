@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ManusMobile</string>
+    <string name="title_activity_manus_test">ManusTestActivity</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="radio_left">Left</string>
+    <string name="radio_right">Right</string>
+</resources>
