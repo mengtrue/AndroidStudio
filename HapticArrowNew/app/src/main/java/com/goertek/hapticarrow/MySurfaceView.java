@@ -36,7 +36,8 @@ import com.goertek.hapticble.*;
  * 3. restore the low string restore
  */
 
-public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback,
+        Runnable, GtkBLE.OnHapticChangedListener {
     private static String TAG = "MySurfaceView";
 
     private final int CONSTANT_FPS = 20;
@@ -176,6 +177,11 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         //设置焦点
         setFocusable(true);
         //initHaptic(context);
+
+    }
+
+    @Override
+    public void OnHapticChanged(GtkHaptic haptic) {
 
     }
 
