@@ -11,7 +11,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Shader;
-import android.os.Haptics;
+//watch import android.os.Haptics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -24,7 +24,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.Context.HAPTICS_SERVICE;
+// watch import static android.content.Context.HAPTICS_SERVICE;
+
+import com.goertek.hapticble.*;
 
 /**
  * Created by fili.zhang on 2016/9/23.
@@ -98,8 +100,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     //当前游戏状态(默认初始在游戏菜单界面)
     public static int gameState = GAME_MENU;
 
-    // Haptic
-    private Haptics mHaptic;
+    // Watch Haptic
+    //private Haptics mHaptic;
 
     private void initGame() {
         // read the configuration file
@@ -177,12 +179,12 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
-    /**
+    /**  watch
      * init the haptic service
-     */
+     *
     void initHaptic(Context context) {
         mHaptic = (Haptics) context.getSystemService(HAPTICS_SERVICE);
-    }
+    }*/
 
     /**
      * SurfaceView视图创建，响应此函数
@@ -402,7 +404,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 } else {
                     // hit play the hit effect
                     if (!hasPlayHit) {
-                        playEffectList(mHapticIdArrowEnd);
+//watch                        playEffectList(mHapticIdArrowEnd);
                         hasPlayHit = true;
                     }
                 }
@@ -681,7 +683,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                     if (mArrow.getArrowBottom() <= getBowBottom()) {
 //                        bowStringY = getBowInitBottom();
 //                        mHaptic.playTimedEffect(50);// bowstring  restore ,playeffect
-                        playEffectLong(50);
+//watch                        playEffectLong(50);
 //                        init();
                     } else {
 //                        bowStringY -= bSpeed;
@@ -798,7 +800,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                     Log.d(TAG, "onTouchEvent_arrow up: gameState  MOVE -> FLY");
                     gameState = GAME_FLY;
                     calcSpeed();
-                    playEffectLong(200);
+//watch                    playEffectLong(200);
 
                 } else {
                     Log.d(TAG, "onTouchEvent_arrow up: gameState" + gameState);
@@ -827,7 +829,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
                     for (indexEffect = effectArrow.length; indexEffect > 0; indexEffect--) {
                         if (distance >= indexEffect * max / effectArrow.length) {
-                            playEffect(effectArrow[indexEffect - 1]);
+//watch                            playEffect(effectArrow[indexEffect - 1]);
                             Log.d(TAG, "logic MOVE -playeffect index:" + indexEffect + "--distance :" + distance + "--max:" + max);
                             break;
                         }
@@ -846,9 +848,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                         Log.d("Arrow", "during fly");
                     }
                     if (aSpeed >= range) {
-                        playEffectList(mHapticIdArrowFlyHeavy);
+//watch                        playEffectList(mHapticIdArrowFlyHeavy);
                     } else {
-                        playEffectList(mHapticIdArrowFlyLight);
+//watch                        playEffectList(mHapticIdArrowFlyLight);
                     }
 
                     break;
@@ -892,7 +894,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
-
+    /**
     void playEffectLong(int milsecond) {
         mHaptic.stopPlayingEffect();
         mHaptic.playTimedEffect(milsecond);
@@ -917,7 +919,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
           mHaptic.stopPlayingEffect();
         mHaptic.playEffectSeqBuff(changeByte2byte(list), list.size());
-    }
+    }*/
 
     private byte[] changeByte2byte(List<Integer> list) {
         byte[] bytes = new byte[list.size()];
