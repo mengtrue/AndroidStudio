@@ -29,3 +29,19 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.0.0'
     testCompile 'junit:junit:4.12'
 }
+
+task HapticArrowNew(type: Copy) {
+    delete 'build/libs/HapticBLE.jar'
+    from('build/intermediates/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename('classes.jar', 'HapticBLE.jar')
+
+    delete 'build/libs/HapticBLE.aar'
+    from('build/outputs/aar/')
+    into('build/libs/')
+    include('hapticble-release.aar')
+    rename('hapticble-release.aar', 'HapticBLE.aar')
+}
+
+HapticArrowNew.dependsOn(build)

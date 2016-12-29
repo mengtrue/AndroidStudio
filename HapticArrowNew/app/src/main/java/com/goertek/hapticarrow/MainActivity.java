@@ -8,6 +8,8 @@ import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
 
+//import com.goertek.hapticble.*;
+
 
 public class MainActivity extends Activity {
 
