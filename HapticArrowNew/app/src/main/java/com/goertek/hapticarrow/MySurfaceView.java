@@ -36,8 +36,7 @@ import com.goertek.hapticble.*;
  * 3. restore the low string restore
  */
 
-public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback,
-        Runnable, GtkBLE.OnHapticChangedListener {
+public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private static String TAG = "MySurfaceView";
 
     private final int CONSTANT_FPS = 20;
@@ -103,6 +102,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     // Watch Haptic
     //private Haptics mHaptic;
+    private GtkBLE.GtkHapticBinder mBinder = null;
+    private static String TAG_Gtk = "GoerTek";
 
     private void initGame() {
         // read the configuration file
@@ -158,7 +159,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     /**
      * SurfaceView初始化函数
      */
-    public MySurfaceView(Context context, int screenHeight, int screenWidth) {
+    public MySurfaceView(Context context, int screenHeight, int screenWidth, GtkBLE.GtkHapticBinder binder) {
         super(context);
         mContext = context;
         mScreenWidth = screenWidth;
@@ -178,11 +179,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         setFocusable(true);
         //initHaptic(context);
 
-    }
-
-    @Override
-    public void OnHapticChanged(GtkHaptic haptic) {
-
+        mBinder = binder;
     }
 
     /**  watch
@@ -789,6 +786,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 prebmpY = bmpY;  // record the pre position
                 bmpY = arrowInitY - arrowHeight + (pointY - (mBow.getBowBottom())); //
                 gameState = GAME_MOVE;//GAME_MOVE;
+                mBinder.getGtkHaptic().setVibration((float) 0.5);
 
             } else {
                 Log.d(TAG, "onTouchEvent_arrow pointX:" + pointX + "pointY:" + pointY + "--gameState:" + gameState);
@@ -851,7 +849,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                     } else if (isHit() && !isHitCenter()) {
                         bmpY = mTarget.getTargetcCenter();
                     } else {
-                        Log.d("Arrow", "during fly");
+                        Log.d(TAG, "during fly");
                     }
                     if (aSpeed >= range) {
 //watch                        playEffectList(mHapticIdArrowFlyHeavy);

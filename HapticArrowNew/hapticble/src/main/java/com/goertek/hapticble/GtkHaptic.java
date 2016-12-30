@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Iterator;
 import java.util.UUID;
@@ -17,9 +18,11 @@ import java.util.UUID;
 
 public class GtkHaptic extends BluetoothGattCallback {
 
+    private static String TAG = "GoerTek";
+
     private static final UUID GTK_HAPTIC_SERVICE = GtkUUID16.GtkToUUID(0x00, 0x01);
     private static final UUID GTK_HAPTIC_REPORT  = GtkUUID16.GtkToUUID(0x00, 0x02);
-    private static final UUID GTK_HAPTIC_RUMBLE  = GtkUUID16.GtkToUUID(0x00, 0x03);
+    private static final UUID GTK_HAPTIC_RUMBLE  = GtkUUID16.GtkToUUID(0x00, 0x06);
 
     private static final UUID CLIENT_CHARACTERISTIC_CONFIG = GtkUUID16.BLEToUUID(0x29, 0x02);
 
@@ -32,8 +35,10 @@ public class GtkHaptic extends BluetoothGattCallback {
     public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic report) {
         final int format = BluetoothGattCharacteristic.FORMAT_SINT16;
 
+        Log.i(TAG, "onCharacteristicChanged uuid is " + report.getUuid() + ", GTK_HAPTIC_REPORT is " + GTK_HAPTIC_REPORT);
         // Only callback when the primary input report changed
         if (report.getUuid().equals(GTK_HAPTIC_REPORT)) {
+            Log.i(TAG, "GTK_HAPTIC_REPORT is " + GTK_HAPTIC_REPORT);
             mGtkHapticCallback.OnChanged(this);
         }
     }
@@ -42,6 +47,8 @@ public class GtkHaptic extends BluetoothGattCallback {
     public void onConnectionStateChange(final BluetoothGatt gatt, final int status, final int newState) {
         super.onConnectionStateChange(gatt, status, newState);
         mConnectionState = newState;
+
+        Log.i(TAG, "onConnectionStateChange status is " + status + ", newState is " + newState);
 
         if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothGatt.STATE_CONNECTED) {
             if (gatt.getServices().isEmpty()) {
@@ -61,13 +68,17 @@ public class GtkHaptic extends BluetoothGattCallback {
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
         super.onServicesDiscovered(gatt, status);
 
+        Log.i(TAG, "onServicesDiscovered status is " + status);
+
         if (status == BluetoothGatt.GATT_SUCCESS) {
             // Try to see if this bluetooth device has the Gtk service
             BluetoothGattService service = gatt.getService(GTK_HAPTIC_SERVICE);
+            Log.i(TAG, "get GtkHaptic service : " + service);
             if (service != null) {
                 mConnectIt = service.getCharacteristics().iterator();
                 if (mConnectIt.hasNext())
                     gatt.readCharacteristic(mConnectIt.next());
+                mGtkHapticCallback.OnHapticConnected(this, true);
             } else {
                 mGtkHapticCallback.OnHapticConnected(this, false);
             }
@@ -77,6 +88,8 @@ public class GtkHaptic extends BluetoothGattCallback {
     @Override
     public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
         super.onDescriptorWrite(gatt, descriptor, status);
+
+        Log.i(TAG, "onDescriptorWrite status is " + status);
 
         if (mConnectIt.hasNext())
             gatt.readCharacteristic(mConnectIt.next());
@@ -90,6 +103,8 @@ public class GtkHaptic extends BluetoothGattCallback {
     @Override
     public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic report, int status) {
         super.onCharacteristicRead(gatt, report, status);
+
+        Log.i(TAG, "onCharacteristicRead status is " + status + ", report uuid is " + report.getUuid());
 
         if (status == BluetoothGatt.GATT_SUCCESS) {
             if (report.getUuid().equals(GTK_HAPTIC_REPORT)) {
@@ -130,6 +145,7 @@ public class GtkHaptic extends BluetoothGattCallback {
      * @return       True if it succeeded
      */
     public boolean setVibration(float fPower) {
+        Log.i(TAG, "setVibration");
         final int format = BluetoothGattCharacteristic.FORMAT_UINT16;
         BluetoothGattService service = mGatt.getService(GTK_HAPTIC_SERVICE);
         BluetoothGattCharacteristic characteristic = service.getCharacteristic(GTK_HAPTIC_RUMBLE);

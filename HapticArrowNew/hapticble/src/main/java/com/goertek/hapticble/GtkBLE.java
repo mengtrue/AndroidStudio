@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,6 +23,8 @@ import java.util.List;
  */
 
 public class GtkBLE extends Service {
+
+    private static String TAG = "GoerTek";
 
     // Binder given to clients
     private final IBinder mBinder = new GtkHapticBinder();
@@ -43,6 +46,11 @@ public class GtkBLE extends Service {
 
     // Connect to a BluetoothDevice
     private void connect(BluetoothDevice dev) {
+        Log.d(TAG, "exist BT device, name is " + dev.getName() + ", address is " + dev.getAddress()
+                //+ ", uuid is " + dev.getUuids().toString()
+                + ", bondState is " + dev.getBondState()
+                + ", type is " + dev.getType()
+                + ", bluetoothClass is " + dev.getBluetoothClass());
         // Reconnect to this device if a Haptic has already been added for it
         if (mHaptic != null) {
             if (mHaptic.mGatt.getDevice().getAddress().equals(dev.getAddress())) {
@@ -51,13 +59,17 @@ public class GtkBLE extends Service {
             }
         }
 
-        mPendingHaptics.add(new GtkHaptic(this, dev, mGtkHapticCallback));
+        GtkHaptic haptic = new GtkHaptic(this, dev, mGtkHapticCallback);
+        Log.d(TAG, "haptic is " + haptic + ", is connected ? " + haptic.isConnected());
+        if (haptic.isConnected())
+            mPendingHaptics.add(haptic);
     }
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
+            Log.i(TAG, "intent action : " + action);
 
             if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
                 final BluetoothDevice dev = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -73,7 +85,8 @@ public class GtkBLE extends Service {
                 // Connect to all bonded devices
                 if (state == BluetoothAdapter.STATE_ON && mAdapter != null) {
                     mConnectIt = mAdapter.getBondedDevices().iterator();
-                    connect(mConnectIt.next());
+                    while (mConnectIt.hasNext())
+                        connect(mConnectIt.next());
                 }
             }
         }
@@ -82,6 +95,7 @@ public class GtkBLE extends Service {
     private GtkHapticCallback mGtkHapticCallback = new GtkHapticCallback() {
         @Override
         public void OnHapticConnected(GtkHaptic haptic, boolean serviceFound) {
+            Log.i(TAG, "OnHapticConnected, serviceFound is " + serviceFound);
             if (serviceFound) {
                 if (mHaptic == null) {
                     mHaptic = haptic;
@@ -101,6 +115,7 @@ public class GtkBLE extends Service {
 
         @Override
         public void OnChanged(GtkHaptic haptic) {
+            Log.i(TAG, "OnChanged haptic is " + haptic);
             for (OnHapticChangedListener listener : mOnHapticChangedListeners) {
                 listener.OnHapticChanged(haptic);
             }
@@ -119,6 +134,7 @@ public class GtkBLE extends Service {
 
     public class GtkHapticBinder extends Binder {
         public GtkHaptic getGtkHaptic() {
+            Log.d(TAG, "mHaptic is " + mHaptic);
             if (mHaptic != null)
                 return mHaptic;
 
@@ -159,13 +175,14 @@ public class GtkBLE extends Service {
         // Retrieve the Bluetooth adapter
         if (bluetoothManager != null) {
             mAdapter = bluetoothManager.getAdapter();
+            Log.d(TAG, "BT is on ? " + mAdapter.isEnabled());
         }
 
         // Connect to all bonded devices
-        if (mAdapter != null) {
+        if (mAdapter != null && mAdapter.isEnabled()) {
             mConnectIt = mAdapter.getBondedDevices().iterator();
-            if (mConnectIt.hasNext()) {
-
+            while (mConnectIt.hasNext()) {
+                connect(mConnectIt.next());
             }
         }
 
