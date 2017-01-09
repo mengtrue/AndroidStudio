@@ -24,6 +24,8 @@ public class MainActivity extends Activity implements GtkBLE.OnHapticChangedList
 //    public static  Haptics haptics;
 //    com.android.server.HapticsService
 
+    public boolean flag = false;                   //setContentView should work once, if not, force close
+
     private static String TAG_Gtk = "GoerTek";
     private GtkBLE.GtkHapticBinder mBinder = null;
 
@@ -84,8 +86,9 @@ public class MainActivity extends Activity implements GtkBLE.OnHapticChangedList
             Log.d(TAG_Gtk, "no haptic");
             Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
             startActivity(intent);
-        } else {
+        } else if (flag == false) {
             showSurfaceView();
+            flag = true;
         }
     }
 
