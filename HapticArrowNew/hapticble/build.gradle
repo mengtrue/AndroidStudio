@@ -31,13 +31,13 @@ dependencies {
 }
 
 task HapticArrowNew(type: Copy) {
-    delete 'build/libs/HapticBLE.jar'
+    //delete 'build/libs/HapticBLE.jar'
     from('build/intermediates/bundles/release/')
     into('build/libs/')
     include('classes.jar')
     rename('classes.jar', 'HapticBLE.jar')
 
-    delete 'build/libs/HapticBLE.aar'
+    //delete 'build/libs/HapticBLE.aar'
     from('build/outputs/aar/')
     into('build/libs/')
     include('hapticble-release.aar')
