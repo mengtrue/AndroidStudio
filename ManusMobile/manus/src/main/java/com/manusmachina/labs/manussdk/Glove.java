@@ -26,6 +26,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Iterator;
 import java.util.UUID;
@@ -127,6 +128,9 @@ public class Glove extends BluetoothGattCallback {
     protected Iterator<BluetoothGattCharacteristic> mConnectIt = null;
     protected int mConnectionState = BluetoothGatt.STATE_DISCONNECTED;
 
+    int value = -1;
+    int current = -1;
+
     @Override
     public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic report) {
         final int format = BluetoothGattCharacteristic.FORMAT_SINT16;
@@ -152,6 +156,27 @@ public class Glove extends BluetoothGattCallback {
                 fingers[finger] = report.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 14 + i) / FINGER_DIVISOR;
             }
             mFingers = fingers;
+
+            //Log.d("MENG", "value is " + value + ", current is " + current);
+            if (value == -1 && current == -1)
+                value = report.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 19);
+            else
+                current = report.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 19);
+
+            Log.d("MENG", "receive : " + current);
+
+            if (current == 0) {
+                if (value != 255)
+                    Log.e("ERROR", "miss " + (255 - value));
+            } else if (value != -1) {
+                int miss = current - value;
+                if (miss != 1)
+                    Log.e("ERROR", "miss " + miss);
+            }
+
+            if (current != -1)
+                value = current;
+
         }
 
         if (report.getUuid().equals(MANUS_GLOVE_REPORT))
