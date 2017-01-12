@@ -25,7 +25,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     //compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:appcompat-v7:23.1.0'
+    //compile 'com.android.support:appcompat-v7:23.1.0'
     testCompile 'junit:junit:4.12'
     compile files('libs/classes.jar')
 }
@@ -46,6 +46,7 @@ task makeReleaseJar(dependsOn: ['compileReleaseJavaWithJavac'], type: Jar) {
     from srcClassDir           //初始化打包资源路径
     //exclude "android/**"       //去除部分资源
     exclude "**/R\$*.class"
+    exclude "**/R.class"
     include "com/goertek/unitylauncher/*.class"  //只导入部分资源
 }
 

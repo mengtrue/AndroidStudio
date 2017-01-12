@@ -18,6 +18,6 @@ public class MainActivity extends UnityPlayerActivity {
     }
 
     public void showTestToast() {
-        Toast.makeText(getApplicationContext(), "This is only for test", Toast.LENGTH_LONG);
+        Toast.makeText(getApplicationContext(), "This is only for test", Toast.LENGTH_LONG).show();
     }
 }
