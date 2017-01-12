@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.goertek.launch.testunityandroidjar"
+        minSdkVersion 24
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    testCompile 'junit:junit:4.12'
+    compile files('libs/classes.jar')
+}
+
+// new version gradle should use compileReleaseJavaWithJavac
+// old version gradle should use compileReleaseJava
+// release jar path: app/build/libs
+task makeReleaseJar(dependsOn: ['compileReleaseJavaWithJavac'], type: Jar) {
+    appendix = "AndroidJar"
+    baseName = "Unity"
+    version = "1.0.0"
+    classifier = "release"
+
+    extension = "jar"          //后缀名
+    //archiveName = "test.jar"   //jar包名，若不设置，默认为 [baseName]-[appendix]-[version]-[release].[extension]
+
+    def srcClassDir = [project.buildDir.absolutePath + "/intermediates/classes/release"] //打包资源路径
+    from srcClassDir           //初始化打包资源路径
+    //exclude "android/**"       //去除部分资源
+    exclude "**/R\$*.class"
+    include "com/goertek/launch/testunityandroidjar/*.class"  //只导入部分资源
+}
+
+task makeDebugJar(dependsOn: ['compileDebugJavaWithJavac'], type: Jar) {
+    appendix = "AndroidJar"
+    baseName = "Unity"
+    version = "1.0.0"
+    classifier = "Debug"
+
+    extension = "jar"          //后缀名
+    //archiveName = "test.jar"   //jar包名，若不设置，默认为 [baseName]-[appendix]-[version]-[release].[extension]
+
+    def srcClassDir = [project.buildDir.absolutePath + "/intermediates/classes/debug"] //打包资源路径
+    from srcClassDir           //初始化打包资源路径
+    //exclude "android/**"       //去除部分资源
+    exclude "**/R\$*.class"
+    include "com/goertek/launch/testunityandroidjar/*.class"  //只导入部分资源
+}
