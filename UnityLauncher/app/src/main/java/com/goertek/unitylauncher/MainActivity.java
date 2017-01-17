@@ -63,10 +63,6 @@ public class MainActivity extends Activity {
         }
     };
 
-    private void getWidget() {
-        int appWidgetId = 
-    }
-
     public class AppsAdapter extends BaseAdapter {
         public AppsAdapter() {
 
