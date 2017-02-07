@@ -42,7 +42,7 @@ dependencies {
 task makeReleaseJar(dependsOn: ['compileReleaseJavaWithJavac'], type: Jar) {
     appendix = "AndroidJar"
     baseName = "Unity"
-    version = "1.0.0"
+    version = "1.1.0"
     classifier = "release"
 
     extension = "jar"          //后缀名
@@ -59,7 +59,7 @@ task makeReleaseJar(dependsOn: ['compileReleaseJavaWithJavac'], type: Jar) {
 task makeDebugJar(dependsOn: ['compileDebugJavaWithJavac'], type: Jar) {
     appendix = "AndroidJar"
     baseName = "Unity"
-    version = "1.0.0"
+    version = "1.1.0"
     classifier = "Debug"
 
     extension = "jar"          //后缀名
