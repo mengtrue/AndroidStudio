@@ -21,13 +21,14 @@ import java.util.List;
    若继承 UnityPlayerActivity，需要注释掉 setContentView()
    若不继承 UnityPlayerActivity，则需要 setContentView( new new UnityPlayer(this) )
  */
-public class MainActivity extends UnityPlayerActivity {
-//public class MainActivity extends Activity {
+//public class MainActivity extends UnityPlayerActivity {
+public class MainActivity extends Activity {
 
     private List<ResolveInfo> apps;
     GridView appsGrid;
 
     GTKWiFi mGTKWiFi;
+    GTKBluetooth mGTKBluetooth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,9 @@ public class MainActivity extends UnityPlayerActivity {
 
         /*mGTKWiFi = new GTKWiFi(getApplicationContext());
         mGTKWiFi.GTKGetWifiScanResults();*/
+
+        mGTKBluetooth = new GTKBluetooth(getApplicationContext());
+        mGTKBluetooth.GTKScanBT();
     }
 
     public void showTestToast() {

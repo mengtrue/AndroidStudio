@@ -10,6 +10,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        // Enabling multidex support.
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -34,6 +36,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile files('libs/classes.jar')
     compile files('libs/JNINative.jar')
+    compile files('libs/system_classes.jar')
+    compile 'com.android.support:multidex:1.0.0'
 }
 
 // new version gradle should use compileReleaseJavaWithJavac
@@ -42,7 +46,7 @@ dependencies {
 task makeReleaseJar(dependsOn: ['compileReleaseJavaWithJavac'], type: Jar) {
     appendix = "AndroidJar"
     baseName = "Unity"
-    version = "1.1.0"
+    version = "1.2.0"
     classifier = "release"
 
     extension = "jar"          //后缀名
@@ -59,7 +63,7 @@ task makeReleaseJar(dependsOn: ['compileReleaseJavaWithJavac'], type: Jar) {
 task makeDebugJar(dependsOn: ['compileDebugJavaWithJavac'], type: Jar) {
     appendix = "AndroidJar"
     baseName = "Unity"
-    version = "1.1.0"
+    version = "1.2.0"
     classifier = "Debug"
 
     extension = "jar"          //后缀名
