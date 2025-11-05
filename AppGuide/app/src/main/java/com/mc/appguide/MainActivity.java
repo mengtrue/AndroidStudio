@@ -5,19 +5,20 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.Configuration;
+import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
-@SuppressWarnings("deprecation")
 public class MainActivity extends Activity implements View.OnClickListener {
-    private LinearLayout navBar;
-    private Button lockBtn;
-    private int currentTabId = R.id.nav_home;
-    private boolean isNavigationBlocked = false; // Fragment缓存
+    private static final String KEY_CURRENT_NAV_TAB_ID = "current_nav_tab_id";
+    private static final String KEY_DISABLED_NAV_TAB_ID = "disabled_nav_tab_id";
+    private LinearLayout mBottomNav;
+    private int mCurrentNavTabId = R.id.nav_home;
+    private int mDisabledNavTabId = -1;
     private SparseArray<Fragment> fragmentCache = new SparseArray<>();
     private FragmentManager fragmentManager;
 
@@ -25,52 +26,35 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         fragmentManager = getFragmentManager();
 
-        // 初始化导航栏
-        navBar = findViewById(R.id.nav_bar);
-
-        // 设置导航按钮点击监听
+        mBottomNav = findViewById(R.id.nav_bar);
         findViewById(R.id.nav_home).setOnClickListener(this);
-        findViewById(R.id.nav_contacts).setOnClickListener(this);
+        findViewById(R.id.nav_bcradio).setOnClickListener(this);
         findViewById(R.id.nav_discover).setOnClickListener(this);
-        findViewById(R.id.nav_me).setOnClickListener(this);
 
-        // 锁定按钮
-        lockBtn = findViewById(R.id.lock_btn);
-        lockBtn.setOnClickListener(v -> {
-            isNavigationBlocked = !isNavigationBlocked;
-            updateNavButtonsState();
-            lockBtn.setText(isNavigationBlocked ? "解锁导航" : "锁定导航");
-        });
-
-        // 恢复保存的状态
         if (savedInstanceState != null) {
-            currentTabId = savedInstanceState.getInt("CURRENT_TAB", R.id.nav_home);
-            isNavigationBlocked = savedInstanceState.getBoolean("IS_BLOCKED", false);
+            mCurrentNavTabId = savedInstanceState.getInt(KEY_CURRENT_NAV_TAB_ID, R.id.nav_home);
+            mDisabledNavTabId = savedInstanceState.getInt(KEY_DISABLED_NAV_TAB_ID, -1);
         }
+        switchRadioFragment();
 
-        // 显示初始Fragment
-        switchToTab(currentTabId);
-        setSelectedTab(currentTabId);
-        lockBtn.setText(isNavigationBlocked ? "解锁导航" : "锁定导航");
-
-        // 初始化禁用"发现"按钮
-        setNavButtonEnabled(R.id.nav_discover, false);
+        DataSetObserver mObserver = new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                runOnUiThread(() -> {
+                });
+            }
+        };
     }
 
     @Override
     public void onClick(View v) {
-        if (isNavigationBlocked) {
-            showBlockedMessage();
-            return;
-        }
-
         int targetTabId = v.getId();
-        if (targetTabId != currentTabId) {
-            switchToTab(targetTabId);
-            setSelectedTab(targetTabId);
-            currentTabId = targetTabId;
+        if (targetTabId != mCurrentNavTabId && targetTabId != mDisabledNavTabId) {
+            mCurrentNavTabId = targetTabId;
+            switchRadioFragment();
         }
     }
 
@@ -81,91 +65,72 @@ public class MainActivity extends Activity implements View.OnClickListener {
         fragmentCache = null;
     }
 
-    private void switchToTab(int tabId) {
-        // 从缓存中获取Fragment
-        Fragment fragment = fragmentCache.get(tabId);
-
+    @SuppressWarnings("deprecation")
+    private void switchRadioFragment() {
+        Fragment fragment = fragmentCache.get(mCurrentNavTabId);
         if (fragment == null) {
-            // 创建新的Fragment实例
-            fragment = createFragmentForTab(tabId);
-            fragmentCache.put(tabId, fragment);
+            fragment = createFragment(mCurrentNavTabId);
+            fragmentCache.put(mCurrentNavTabId, fragment);
         }
-
-        // 执行Fragment切换
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
+        updateFragmentTabState();
     }
 
     @SuppressLint("NonConstantResourceId")
-    private Fragment createFragmentForTab(int tabId) {
-        switch (tabId) {
-            case R.id.nav_contacts:
-                return new ContactsFragment();
+    private Fragment createFragment(int navTabId) {
+        switch (navTabId) {
+            case R.id.nav_bcradio:
+                return new BcRadioFragment();
             case R.id.nav_discover:
                 return new DiscoverFragment();
-            case R.id.nav_me:
-                return new MeFragment();
             case R.id.nav_home:
             default:
                 return new HomeFragment();
         }
     }
 
-    private void setSelectedTab(int selectedId) {
-        for (int i = 0; i < navBar.getChildCount(); i++) {
-            View child = navBar.getChildAt(i);
-            if (child.getId() == R.id.lock_btn) continue;
-
-            child.setSelected(child.getId() == selectedId);
+    private void updateFragmentTabState() {
+        for (int i = 0; i < mBottomNav.getChildCount(); i++) {
+            View child = mBottomNav.getChildAt(i);
+            child.setSelected(child.getId() == mCurrentNavTabId);
+            setFragmentTabEnabled(child, child.getId() != mDisabledNavTabId);
         }
     }
 
-    private void showBlockedMessage() {
-        Toast.makeText(this, "请完成当前操作后再切换", Toast.LENGTH_SHORT).show();
-    }
-
-    // ====== 导航栏控制方法 =======
-    public void setNavigationBlocked(boolean blocked) {
-        isNavigationBlocked = blocked;
-        updateNavButtonsState();
-    }
-
-    private void updateNavButtonsState() {
-        for (int i = 0; i < navBar.getChildCount(); i++) {
-            View child = navBar.getChildAt(i);
-            if (child.getId() == R.id.lock_btn) continue;
-
-            child.setEnabled(!isNavigationBlocked);
-            float alpha = isNavigationBlocked ? 0.5f : 1.0f;
-            child.setAlpha(alpha);
-        }
-    }
-
-    public void setNavButtonEnabled(int buttonId, boolean enabled) {
-        View button = findViewById(buttonId);
+    public void setFragmentTabEnabled(View button, boolean enabled) {
         if (button != null) {
             button.setEnabled(enabled);
             button.setAlpha(enabled ? 1.0f : 0.5f);
+            if (!enabled) mDisabledNavTabId = button.getId();
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("CURRENT_TAB", currentTabId);
-        outState.putBoolean("IS_BLOCKED", isNavigationBlocked);
+        outState.putInt(KEY_CURRENT_NAV_TAB_ID, mCurrentNavTabId);
+        outState.putInt(KEY_DISABLED_NAV_TAB_ID, mDisabledNavTabId);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        currentTabId = savedInstanceState.getInt("CURRENT_TAB", R.id.nav_home);
-        isNavigationBlocked = savedInstanceState.getBoolean("IS_BLOCKED", false);
-        lockBtn.setText(isNavigationBlocked ? "解锁导航" : "锁定导航");
-        switchToTab(currentTabId);
-        setSelectedTab(currentTabId);
-        updateNavButtonsState();
+        mCurrentNavTabId = savedInstanceState.getInt(KEY_CURRENT_NAV_TAB_ID, R.id.nav_home);
+        mDisabledNavTabId = savedInstanceState.getInt(KEY_DISABLED_NAV_TAB_ID, -1);
+        switchRadioFragment();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.d("Main", "landscape");
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Log.d("Main", "portrait");
+        }
     }
 
     // === Fragment 定义 ===
