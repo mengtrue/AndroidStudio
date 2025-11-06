@@ -49,13 +49,13 @@
             android:textSize="12sp"
             android:background="@drawable/nav_button_bg"/>
 
-        <!-- 发现 -->
+        <!-- Settings -->
         <Button
-            android:id="@+id/nav_discover"
+            android:id="@+id/nav_tab_settings"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="发现"
+            android:text="Settings"
             android:drawableTop="@drawable/ic_discover"
             android:gravity="center"
             android:padding="4dp"

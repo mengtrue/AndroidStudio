@@ -32,7 +32,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mBottomNav = findViewById(R.id.nav_bar);
         findViewById(R.id.nav_home).setOnClickListener(this);
         findViewById(R.id.nav_bcradio).setOnClickListener(this);
-        findViewById(R.id.nav_discover).setOnClickListener(this);
+        findViewById(R.id.nav_tab_settings).setOnClickListener(this);
 
         if (savedInstanceState != null) {
             mCurrentNavTabId = savedInstanceState.getInt(KEY_CURRENT_NAV_TAB_ID, R.id.nav_home);
@@ -82,9 +82,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Fragment createFragment(int navTabId) {
         switch (navTabId) {
             case R.id.nav_bcradio:
-                return new BcRadioFragment();
-            case R.id.nav_discover:
-                return new DiscoverFragment();
+                return new SettingsFragment();
+            case R.id.nav_tab_settings:
+                return new SettingsFragment();
             case R.id.nav_home:
             default:
                 return new HomeFragment();
