@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <PreferenceCategory
-        android:title="设置选项"
-        android:key="category_general">
-
-        <ListPreference
-            android:key="dropdown"
-            android:title="test"
-            android:entries="@array/reply_entries"
-            android:entryValues="@array/reply_values"/>
-
-    </PreferenceCategory>
-
     <PreferenceCategory
         android:title="隐私设置"
         android:key="category_privacy">

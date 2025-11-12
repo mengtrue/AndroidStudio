@@ -17,7 +17,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private static final String KEY_CURRENT_NAV_TAB_ID = "current_nav_tab_id";
     private static final String KEY_DISABLED_NAV_TAB_ID = "disabled_nav_tab_id";
     private LinearLayout mBottomNav;
-    private int mCurrentNavTabId = R.id.nav_home;
+    private int mCurrentNavTabId = R.id.nav_tab_tuner;
     private int mDisabledNavTabId = -1;
     private SparseArray<Fragment> fragmentCache = new SparseArray<>();
     private FragmentManager fragmentManager;
@@ -30,12 +30,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         fragmentManager = getFragmentManager();
 
         mBottomNav = findViewById(R.id.nav_bar);
-        findViewById(R.id.nav_home).setOnClickListener(this);
-        findViewById(R.id.nav_bcradio).setOnClickListener(this);
+        findViewById(R.id.nav_tab_tuner).setOnClickListener(this);
+        findViewById(R.id.nav_tab_record).setOnClickListener(this);
         findViewById(R.id.nav_tab_settings).setOnClickListener(this);
 
         if (savedInstanceState != null) {
-            mCurrentNavTabId = savedInstanceState.getInt(KEY_CURRENT_NAV_TAB_ID, R.id.nav_home);
+            mCurrentNavTabId = savedInstanceState.getInt(KEY_CURRENT_NAV_TAB_ID, R.id.nav_tab_tuner);
             mDisabledNavTabId = savedInstanceState.getInt(KEY_DISABLED_NAV_TAB_ID, -1);
         }
         switchRadioFragment();
@@ -81,13 +81,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @SuppressLint("NonConstantResourceId")
     private Fragment createFragment(int navTabId) {
         switch (navTabId) {
-            case R.id.nav_bcradio:
+            case R.id.nav_tab_tuner:
                 return new SettingsFragment();
+            case R.id.nav_tab_record:
+                return new RecordFilesFragment();
             case R.id.nav_tab_settings:
                 return new SettingsFragment();
-            case R.id.nav_home:
             default:
-                return new HomeFragment();
+                return new SettingsFragment();
         }
     }
 
@@ -117,7 +118,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mCurrentNavTabId = savedInstanceState.getInt(KEY_CURRENT_NAV_TAB_ID, R.id.nav_home);
+        mCurrentNavTabId = savedInstanceState.getInt(KEY_CURRENT_NAV_TAB_ID, R.id.nav_tab_tuner);
         mDisabledNavTabId = savedInstanceState.getInt(KEY_DISABLED_NAV_TAB_ID, -1);
         switchRadioFragment();
     }
@@ -131,22 +132,5 @@ public class MainActivity extends Activity implements View.OnClickListener {
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             Log.d("Main", "portrait");
         }
-    }
-
-    // === Fragment 定义 ===
-    public static class HomeFragment extends Fragment {
-        public HomeFragment() {}
-    }
-
-    public static class ContactsFragment extends Fragment {
-        public ContactsFragment() {}
-    }
-
-    public static class DiscoverFragment extends Fragment {
-        public DiscoverFragment() {}
-    }
-
-    public static class MeFragment extends Fragment {
-        public MeFragment() {}
     }
 }

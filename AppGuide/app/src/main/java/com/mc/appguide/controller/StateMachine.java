@@ -1,4 +1,4 @@
-package com.mc.appguide.controller.utils;
+package com.mc.appguide.controller;
 
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;

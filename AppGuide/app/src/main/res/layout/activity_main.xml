@@ -5,58 +5,53 @@
     android:orientation="vertical"
     android:background="#F5F5F5">
 
-    <!-- ===== Fragment 容器（Fragment Container） ===== -->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"/>
 
-    <!-- ===== 底部导航栏（Bottom Navigation Bar） ===== -->
     <LinearLayout
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="#FFFFFF"
         android:baselineAligned="false"
         android:divider="@drawable/divider"
         android:showDividers="middle">
 
-        <!-- 首页 -->
         <Button
-            android:id="@+id/nav_home"
+            android:id="@+id/nav_tab_tuner"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="首页"
-            android:drawableTop="@drawable/ic_home"
+            android:text="Tuner"
+            android:drawableTop="@drawable/ic_nav_tuner"
             android:gravity="center"
             android:padding="4dp"
             android:textSize="12sp"
             android:background="@drawable/nav_button_bg"/>
 
-        <!-- 联系人 -->
         <Button
-            android:id="@+id/nav_bcradio"
+            android:id="@+id/nav_tab_record"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="BcRadio"
-            android:drawableTop="@drawable/ic_contacts"
+            android:text="Record"
+            android:drawableTop="@drawable/ic_nav_record"
             android:gravity="center"
             android:padding="4dp"
             android:textSize="12sp"
             android:background="@drawable/nav_button_bg"/>
 
-        <!-- Settings -->
         <Button
             android:id="@+id/nav_tab_settings"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Settings"
-            android:drawableTop="@drawable/ic_discover"
+            android:drawableTop="@drawable/ic_nav_settings"
             android:gravity="center"
             android:padding="4dp"
             android:textSize="12sp"
